@@ -33,14 +33,17 @@ void UTurnBasedGameplayEffect::PostInitProperties()
 	// Clear duration magnitude values
 	DurationMagnitude = FGameplayEffectModifierMagnitude();
 
-	// Always add the Turn based component
-	FindOrAddComponent<UTurnBasedGameplayEffectComponent>();
-
-	// Always add the Turn based asset tag.
-	UAssetTagsGameplayEffectComponent& AssetTagComponent = FindOrAddComponent<UAssetTagsGameplayEffectComponent>();
-	FInheritedTagContainer Tags = AssetTagComponent.GetConfiguredAssetTagChanges();
-	Tags.AddTag(TurnBasedNativeGameplayTags::TAG_Effect_Type_TurnBased.GetTag());
-	AssetTagComponent.SetAndApplyAssetTagChanges(Tags);
+	if (!IsRunningCommandlet())
+	{
+		// Always add the Turn based component
+		FindOrAddComponent<UTurnBasedGameplayEffectComponent>();
+	
+		// Always add the Turn based asset tag.
+		UAssetTagsGameplayEffectComponent& AssetTagComponent = FindOrAddComponent<UAssetTagsGameplayEffectComponent>();
+		FInheritedTagContainer Tags = AssetTagComponent.GetConfiguredAssetTagChanges();
+		Tags.AddTag(TurnBasedNativeGameplayTags::TAG_Effect_Type_TurnBased.GetTag());
+		AssetTagComponent.SetAndApplyAssetTagChanges(Tags);
+	}
 
 	// For now, we limit turn based effect to only one stack, not refreshable.
 	StackingType = EGameplayEffectStackingType::AggregateByTarget;
